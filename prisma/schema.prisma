@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Restaurant {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  name      String
+  logo      String?
+  plan      String   @default("basic")
+  isActive  Boolean  @default(true)
+  config    Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dishes      Dish[]
+  categories  Category[]
+  waiterCalls WaiterCall[]
+  admins      Admin[]
+
+  @@map("restaurants")
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurants Restaurant[]
+
+  @@map("admins")
+}
+
+model Category {
+  id           String   @id @default(uuid())
+  restaurantId String
+  name         String
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  dishes     Dish[]
+
+  @@index([restaurantId])
+  @@index([restaurantId, displayOrder])
+  @@map("categories")
+}
+
+model Dish {
+  id            String   @id @default(uuid())
+  restaurantId  String
+  categoryId    String?
+  name          String
+  description   String   @default("")
+  price         Int      // price in cents
+  videoUrl      String?
+  thumbnailUrl  String?
+  highlighted   Boolean  @default(false)
+  active        Boolean  @default(true)
+  viewCount     Int      @default(0)
+  averageRating Float    @default(0)
+  ratingCount   Int      @default(0)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  category   Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  ratings    Rating[]
+
+  @@index([restaurantId])
+  @@index([restaurantId, active])
+  @@index([restaurantId, categoryId])
+  @@index([restaurantId, highlighted])
+  @@map("dishes")
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  dishId    String
+  score     Int      // 1-5
+  sessionId String?
+  createdAt DateTime @default(now())
+
+  dish Dish @relation(fields: [dishId], references: [id], onDelete: Cascade)
+
+  @@index([dishId])
+  @@map("ratings")
+}
+
+model WaiterCall {
+  id              String   @id @default(uuid())
+  restaurantId    String
+  tableIdentifier String
+  status          String   @default("pending") // pending, acknowledged, completed
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId])
+  @@index([restaurantId, status])
+  @@map("waiter_calls")
+}
