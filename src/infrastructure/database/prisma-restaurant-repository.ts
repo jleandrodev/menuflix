@@ -73,7 +73,7 @@ export class PrismaRestaurantRepository implements IRestaurantRepository {
         logo: restaurant.logo,
         plan: restaurant.plan,
         isActive: restaurant.isActive,
-        config: restaurant.config,
+        config: restaurant.config as any,
       },
     });
   }
@@ -87,7 +87,7 @@ export class PrismaRestaurantRepository implements IRestaurantRepository {
         logo: restaurant.logo,
         plan: restaurant.plan,
         isActive: restaurant.isActive,
-        config: restaurant.config,
+        config: restaurant.config as any,
         admins: {
           connectOrCreate: {
             where: { email: adminEmail },
@@ -110,7 +110,7 @@ export class PrismaRestaurantRepository implements IRestaurantRepository {
         logo: restaurant.logo,
         plan: restaurant.plan,
         isActive: restaurant.isActive,
-        config: restaurant.config,
+        config: restaurant.config as any,
       },
     });
   }

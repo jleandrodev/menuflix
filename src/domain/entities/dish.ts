@@ -28,7 +28,7 @@ export interface CreateDishInput {
   restaurantId: string;
   categoryId?: string | null;
   name: string;
-  description?: string;
+  description?: string | null;
   priceInCents: number;
   videoUrl?: string | null;
   thumbnailUrl?: string | null;
