@@ -9,4 +9,7 @@ export interface IRestaurantRepository {
   save(restaurant: RestaurantSnapshot): Promise<void>;
   createWithAdmin(restaurant: RestaurantSnapshot, adminEmail: string): Promise<void>;
   update(restaurant: RestaurantSnapshot): Promise<void>;
+  listAdmins(restaurantId: string): Promise<{ id: string; email: string; name: string }[]>;
+  addAdminByEmail(restaurantId: string, email: string): Promise<void>;
+  removeAdmin(restaurantId: string, adminId: string): Promise<void>;
 }

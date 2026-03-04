@@ -114,4 +114,48 @@ export class PrismaRestaurantRepository implements IRestaurantRepository {
       },
     });
   }
+
+  async listAdmins(restaurantId: string): Promise<{ id: string; email: string; name: string }[]> {
+    const restaurant = await prisma.restaurant.findUnique({
+      where: { id: restaurantId },
+      include: { admins: true },
+    });
+
+    if (!restaurant) return [];
+
+    return restaurant.admins.map((admin: any) => ({
+      id: admin.id,
+      email: admin.email,
+      name: admin.name,
+    }));
+  }
+
+  async addAdminByEmail(restaurantId: string, email: string): Promise<void> {
+    await prisma.restaurant.update({
+      where: { id: restaurantId },
+      data: {
+        admins: {
+          connectOrCreate: {
+            where: { email },
+            create: {
+              email,
+              name: email.split("@")[0],
+              passwordHash: "supabase-auth", // Placeholder
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async removeAdmin(restaurantId: string, adminId: string): Promise<void> {
+    await prisma.restaurant.update({
+      where: { id: restaurantId },
+      data: {
+        admins: {
+          disconnect: { id: adminId },
+        },
+      },
+    });
+  }
 }

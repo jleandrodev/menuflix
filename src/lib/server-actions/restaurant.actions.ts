@@ -43,3 +43,35 @@ export async function createRestaurantAction(formData: FormData) {
     return { error: error.message || "Erro ao criar restaurante." };
   }
 }
+
+export async function addMemberAction(restaurantSlug: string, email: string) {
+  if (!email) return { error: "Email é obrigatório." };
+
+  const repo = new PrismaRestaurantRepository();
+  const restaurant = await repo.findBySlug(restaurantSlug);
+  
+  if (!restaurant) return { error: "Restaurante não encontrado." };
+
+  try {
+    await repo.addAdminByEmail(restaurant.id, email.toLowerCase().trim());
+    revalidatePath(`/admin/${restaurantSlug}/settings`);
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Erro ao adicionar membro." };
+  }
+}
+
+export async function removeMemberAction(restaurantSlug: string, adminId: string) {
+  const repo = new PrismaRestaurantRepository();
+  const restaurant = await repo.findBySlug(restaurantSlug);
+  
+  if (!restaurant) return { error: "Restaurante não encontrado." };
+
+  try {
+    await repo.removeAdmin(restaurant.id, adminId);
+    revalidatePath(`/admin/${restaurantSlug}/settings`);
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Erro ao remover membro." };
+  }
+}
