@@ -178,34 +178,47 @@ export function VideoFeed({
               </div>
             </div>
             
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+            <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide snap-x">
                {dishes.filter(d => d.highlighted).map(dish => (
                   <div 
                     key={dish.id}
                     onClick={() => openFeedMode(dish.id)} 
-                    className="shrink-0 w-64 md:w-72 rounded-2xl bg-[#130F1C] border border-white/5 overflow-hidden cursor-pointer group snap-center"
+                    className="shrink-0 w-48 md:w-56 aspect-[9/16] relative bg-[#130F1C] overflow-hidden cursor-pointer group snap-center"
                   >
-                     <div className="aspect-video relative overflow-hidden">
+                     {/* Background */}
+                     <div className="absolute inset-0 z-0">
                         {dish.videoUrl ? (
-                          <video src={dish.videoUrl} autoPlay muted loop playsInline className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" poster={dish.thumbnailUrl ?? undefined} />
+                          <video src={dish.videoUrl} autoPlay muted loop playsInline className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" poster={dish.thumbnailUrl ?? undefined} />
                         ) : dish.thumbnailUrl ? (
-                          <img src={dish.thumbnailUrl} alt={dish.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <img src={dish.thumbnailUrl} alt={dish.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                         ) : (
                           <div className="w-full h-full bg-[#1A1525] flex items-center justify-center">
                               <PlaySquare className="w-10 h-10 text-white/20" />
                           </div>
                         )}
-                        <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-xs font-medium border border-white/10 flex items-center gap-1">
-                           <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
+                     </div>
+                     
+                     {/* Top Right */}
+                     <div className="absolute top-2 right-2 z-10 flex flex-col items-end gap-1">
+                        <div className="bg-black/40 backdrop-blur-md px-1.5 py-0.5 rounded-sm text-[10px] font-bold border border-white/10 flex items-center gap-1 shadow-lg">
+                           <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
                            {dish.averageRating}
                         </div>
-                     </div>
-                     <div className="p-4">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                           <h3 className="font-semibold line-clamp-1 group-hover:text-[#E11D48] transition-colors">{dish.name}</h3>
-                           <span className="font-bold text-[#10B981] whitespace-nowrap">{dish.priceFormatted}</span>
+                        <div className="bg-black/40 backdrop-blur-md px-1.5 py-0.5 rounded-sm text-[10px] font-medium border border-white/10 flex items-center gap-1 shadow-lg">
+                           <PlaySquare className="w-2.5 h-2.5 text-white/70" />
+                           {dish.viewCount > 1000 ? `${(dish.viewCount / 1000).toFixed(1)}k` : dish.viewCount}
                         </div>
-                        <p className="text-xs text-white/50 line-clamp-2">{dish.description}</p>
+                     </div>
+
+                     {/* Bottom Left */}
+                     <div className="absolute bottom-3 left-3 z-10 right-3">
+                        <h3 className="font-bold text-sm md:text-base text-white drop-shadow-md line-clamp-1 leading-tight mb-1 transition-colors">{dish.name}</h3>
+                        <div className="flex">
+                           <span className="font-bold text-xs md:text-sm text-white/90 drop-shadow-md bg-[#E11D48] px-2 py-1">
+                             {dish.priceFormatted}
+                           </span>
+                        </div>
                      </div>
                   </div>
                ))}
@@ -236,37 +249,49 @@ export function VideoFeed({
          </div>
 
          {/* Menu Grid */}
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 md:p-0 mt-6">
+         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-0.5 md:gap-1 mt-6">
             {filteredDishes.map(dish => (
                <div 
                  key={dish.id}
                  onClick={() => openFeedMode(dish.id)}
-                 className="flex h-32 rounded-2xl bg-[#130F1C] border border-white/5 overflow-hidden cursor-pointer group hover:bg-[#1A1525] transition-colors"
+                 className="relative aspect-[9/16] bg-[#130F1C] overflow-hidden cursor-pointer group"
                >
-                 <div className="w-32 h-full shrink-0 relative overflow-hidden bg-[#1A1525]">
+                 {/* Background Image / Video */}
+                 <div className="absolute inset-0 z-0">
                     {dish.videoUrl ? (
-                      <video src={dish.videoUrl} autoPlay muted loop playsInline className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" poster={dish.thumbnailUrl ?? undefined} />
+                      <video src={dish.videoUrl} autoPlay muted loop playsInline className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" poster={dish.thumbnailUrl ?? undefined} />
                     ) : dish.thumbnailUrl ? (
-                      <img src={dish.thumbnailUrl} alt={dish.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={dish.thumbnailUrl} alt={dish.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-full h-full flex items-center justify-center bg-[#1A1525]">
                           <PlaySquare className="w-8 h-8 text-white/10" />
                       </div>
                     )}
+                    {/* Shadow Overlay for readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
                  </div>
-                 <div className="p-3 flex flex-col justify-between flex-1 min-w-0">
-                    <div>
-                       <h3 className="font-semibold text-sm line-clamp-1 mb-0.5">{dish.name}</h3>
-                       <p className="text-xs text-white/50 line-clamp-2">{dish.description}</p>
+
+                 {/* Top Right: Rating and Views */}
+                 <div className="absolute top-1.5 right-1.5 z-10 flex flex-col items-end gap-1">
+                    {dish.averageRating > 0 && (
+                      <div className="bg-black/40 backdrop-blur-md px-1 py-0.5 rounded-sm text-[8px] md:text-[10px] font-bold border border-white/10 flex items-center gap-0.5 shadow-lg">
+                        <Star className="w-2 h-2 md:w-2.5 md:h-2.5 text-yellow-500 fill-yellow-500" />
+                        {dish.averageRating}
+                      </div>
+                    )}
+                    <div className="bg-black/40 backdrop-blur-md px-1 py-0.5 rounded-sm text-[8px] md:text-[10px] font-medium border border-white/10 flex items-center gap-0.5 shadow-lg">
+                       <PlaySquare className="w-2 h-2 md:w-2.5 md:h-2.5 text-white/70" />
+                       {dish.viewCount > 1000 ? `${(dish.viewCount / 1000).toFixed(1)}k` : dish.viewCount}
                     </div>
-                    <div className="flex items-center justify-between mt-2">
-                       <span className="font-bold text-sm text-white/90">{dish.priceFormatted}</span>
-                       {dish.averageRating > 0 && (
-                          <div className="flex items-center gap-1 text-xs text-white/60">
-                             <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                             {dish.averageRating}
-                          </div>
-                       )}
+                 </div>
+
+                 {/* Bottom Left: Name and Price */}
+                 <div className="absolute bottom-1.5 left-1.5 z-10 right-1.5">
+                    <h3 className="font-bold text-[10px] md:text-xs text-white drop-shadow-md line-clamp-2 leading-tight mb-1">{dish.name}</h3>
+                    <div className="flex">
+                      <span className="font-bold text-[9px] md:text-[10px] text-white/90 drop-shadow-md bg-[#E11D48] px-1 py-0.5">
+                        {dish.priceFormatted}
+                      </span>
                     </div>
                  </div>
                </div>

@@ -16,6 +16,7 @@ export interface FeedDishOutput {
   highlighted: boolean;
   averageRating: number;
   ratingCount: number;
+  viewCount: number;
   categoryId: string | null;
   categoryName: string | null;
 }

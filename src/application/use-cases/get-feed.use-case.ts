@@ -48,6 +48,7 @@ export class GetFeedUseCase {
       highlighted: d.highlighted,
       averageRating: d.averageRating,
       ratingCount: d.ratingCount,
+      viewCount: d.viewCount,
       categoryId: d.categoryId,
       categoryName: d.categoryId ? categoryMap.get(d.categoryId) ?? null : null,
     }));
